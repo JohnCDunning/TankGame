@@ -24,8 +24,6 @@ public class NetworkingEvents : MonoBehaviour
 
     public void OnEvent(byte eventCode, object content, int senderId)
     {
-        
-        // Do something
         if (eventCode == NetworkingEvents._CreateProjectileEvent)
         {
             object[] data = (object[])content;

@@ -1,33 +1,64 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class Projectile : Photon.MonoBehaviour, IDamageable
 {
     public Rigidbody rb;
     public float _MovementSpeed;
     public float _ReflectionsRemaining = 1;
+    private bool _IsDestroyed = false;
+
+
+    private bool _FlaggedForDestruction;
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        PhotonNetwork.OnEventCall += OnEvent;
+    }
+    private void OnDestroy()
+    {
+        PhotonNetwork.OnEventCall -= OnEvent;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (_IsDestroyed)
+            return;
+        
         if (PhotonNetwork.isMasterClient)
         {
+
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.forward, out hit, 1))
             {
-                Hit(hit.point, hit.normal);
-
+                
+                if (hit.transform.gameObject.TryGetComponent(out IDamageable damageable))
+                {
+                    this.Damage();
+                    damageable.Damage();
+                }
+                else
+                    Hit(hit.point, hit.normal);
+                
             }
             rb.velocity = transform.forward * _MovementSpeed;
+            
         }
     }
-    void Hit(Vector3 hit,Vector3 hitNormal)
+
+    public void OnEvent(byte eventCode, object content, int senderId)
+    {
+        if (eventCode == NetworkingEvents._OnDestroyEvent)
+        {
+            object[] data = (object[]) content;
+            PhotonNetwork.Destroy(PhotonView.Find((int)data[0]));
+        }
+    }
+
+    void Hit(Vector3 hit, Vector3 hitNormal)
     {
         if (_ReflectionsRemaining > 0)
         {
@@ -36,9 +67,21 @@ public class Projectile : MonoBehaviour
             _ReflectionsRemaining--;
             return;
         }
+
         if (PhotonNetwork.isMasterClient)
-        //- The projectile will explode now
-            PhotonNetwork.Destroy(gameObject);
+        {
+            _IsDestroyed = true;
+            RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+            PhotonNetwork.RaiseEvent(NetworkingEvents._OnDestroyEvent, new object[]{photonView.viewID}, true,
+                raiseEventOptions);
+        }
     }
- 
+
+    public void Damage()
+    {
+        _IsDestroyed = true;
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+        PhotonNetwork.RaiseEvent(NetworkingEvents._OnDestroyEvent, new object[]{photonView.viewID}, true, raiseEventOptions);
+    }
+    
 }

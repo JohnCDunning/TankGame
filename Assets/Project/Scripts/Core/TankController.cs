@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class TankController : Photon.MonoBehaviour
+public class TankController : Photon.MonoBehaviour, IDamageable
 {
     [SerializeField] private Rigidbody _Rigidbody;
     [SerializeField] private float _MovementSpeed = 1f;
@@ -23,6 +23,14 @@ public class TankController : Photon.MonoBehaviour
         TurnTank(direction.x);
     }
 
+    public void Damage()
+    {
+        if (PhotonNetwork.isMasterClient)
+        {
+            RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+            PhotonNetwork.RaiseEvent(NetworkingEvents._OnDestroyEvent, new object[]{photonView.viewID}, true, raiseEventOptions);
+        }
+    }
     private void FixedUpdate()
     {
         if (base.photonView.isMine)
@@ -42,8 +50,7 @@ public class TankController : Photon.MonoBehaviour
     }
 
     
-    private byte _CreateProjectileEvent = 0;
-    private byte _CreateMineEvent = 1;
+  
     public void FireWeapon()
     {
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient };
@@ -54,7 +61,7 @@ public class TankController : Photon.MonoBehaviour
         };
         
         
-        PhotonNetwork.RaiseEvent(_CreateProjectileEvent, content, true, raiseEventOptions);
+        PhotonNetwork.RaiseEvent(NetworkingEvents._CreateProjectileEvent, content, true, raiseEventOptions);
     }
 
     public void DeployMine()
@@ -67,7 +74,7 @@ public class TankController : Photon.MonoBehaviour
         };
         
         
-        PhotonNetwork.RaiseEvent(_CreateMineEvent, content, true, raiseEventOptions);
+        PhotonNetwork.RaiseEvent(NetworkingEvents._CreateMineEvent, content, true, raiseEventOptions);
     }
 
     private void Start()
@@ -85,7 +92,7 @@ public class TankController : Photon.MonoBehaviour
         Debug.Log("On Event");
         
         // Do something
-        if (eventCode == _CreateProjectileEvent)
+        if (eventCode == NetworkingEvents._CreateProjectileEvent)
         {
             object[] data = (object[])content;
             
@@ -94,7 +101,7 @@ public class TankController : Photon.MonoBehaviour
             
             PhotonNetwork.InstantiateSceneObject("Projectile", pos, Quaternion.Euler(rot), 0,
                 null);
-        }else if (eventCode == _CreateMineEvent)
+        }else if (eventCode == NetworkingEvents._CreateMineEvent)
         {
             object[] data = (object[])content;
             
@@ -102,6 +109,10 @@ public class TankController : Photon.MonoBehaviour
             Vector3 rot = (Vector3) data[1];
 
             PhotonNetwork.InstantiateSceneObject("Mine", pos, Quaternion.Euler(rot), 0, null);
+        }else if (eventCode == NetworkingEvents._OnDestroyEvent)
+        {
+            object[] data = (object[]) content;
+            PhotonNetwork.Destroy(PhotonView.Find((int)data[0]));
         }
     }
     

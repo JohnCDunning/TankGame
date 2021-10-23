@@ -66,7 +66,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _Rigidbody: {fileID: 924493954788510445}
   _MovementSpeed: 250
-  _RotationSpeed: 100
+  _RotationSpeed: 101
   _Turret: {fileID: 2975433998969312123}
   _Body: {fileID: 924493954788510447}
   _TurrentShootPoint: {fileID: 6828664792564267991}

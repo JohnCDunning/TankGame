@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -11,16 +12,23 @@ public class TankController : MonoBehaviour
     [SerializeField] private Transform _Turret;
     [SerializeField] private Transform _Body;
     [SerializeField] private Transform _TurrentShootPoint;
+
+    private Vector3 _LastVelocity = Vector3.zero;
     public void MoveTank(Vector3 direction)
     {
-        _Rigidbody.velocity = _Body.forward * ((direction.z * _MovementSpeed)  * Time.deltaTime);
+        _LastVelocity = _Body.forward * (direction.z * _MovementSpeed);
 
         TurnTank(direction.x);
     }
 
+    private void FixedUpdate()
+    {
+        _Rigidbody.velocity = _LastVelocity * Time.deltaTime;
+    }
+
     public void TurnTank(float turnDirection)
     {
-        _Body.transform.Rotate(new Vector3(0f, turnDirection * _RotationSpeed * Time.deltaTime, 0f), Space.World);
+        _Body.transform.Rotate(new Vector3(0f, (turnDirection * _RotationSpeed) * Time.deltaTime, 0f), Space.World);
     }
 
     public void TurnTurret(Vector3 lookTarget)

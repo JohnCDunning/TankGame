@@ -8,18 +8,28 @@ public class NetworkingEvents : MonoBehaviour
     public static readonly byte _CreateProjectileEvent = 0;
     public static readonly byte _CreateMineEvent = 1;
     public static readonly byte _OnDestroyEvent = 2;
-
+    public static readonly byte _OnPlayerDefeated = 3;
+    public static readonly byte _LoadScenario = 4;
+    public static readonly byte _PlayerRestarted = 5;
+    public static readonly byte _PlayersDefeated = 6;
+  
     public static NetworkingEvents Instance { get; private set; }
 
     private void Start()
     {
-        Instance = this;
-        PhotonNetwork.OnEventCall += OnEvent;
+        if (Instance == null)
+        {
+            Instance = this;
+            PhotonNetwork.OnEventCall += OnEvent;
+        }
+        else 
+            Destroy(this);
     }
 
     private void OnDestroy()
     {
-        PhotonNetwork.OnEventCall -= OnEvent;
+        if (Instance == this)
+            PhotonNetwork.OnEventCall -= OnEvent;
     }
 
     public void OnEvent(byte eventCode, object content, int senderId)
@@ -49,6 +59,35 @@ public class NetworkingEvents : MonoBehaviour
             {
                 PhotonNetwork.Destroy(pv);
             }
+        }else if (eventCode == _OnPlayerDefeated)
+        {         
+            object[] data = (object[]) content;
+            PhotonView pv = PhotonView.Find((int) data[0]);
+           
+            if (PhotonNetwork.isMasterClient)
+            {
+                int playerID = (int) data[1];
+                ServerController.Instance.OnPlayerDefeated(playerID);
+            }
+
+            if (pv.isMine)
+            {
+                PhotonNetwork.Destroy(pv);
+            }
+        }else if (eventCode == _PlayerRestarted)
+        {
+            ServerController.Instance.ServerRestart();
+        }else if (eventCode == _PlayersDefeated)
+        {
+            ServerController.Instance.DefeatCallback();
+        }else if (eventCode == _LoadScenario)
+        {
+            object[] data = (object[]) content;
+            string scene = (string) data[0];
+            StartCoroutine(ServerController.Instance.LoadSceneAsync(scene));
+            
+            
+          
         }
     }
     

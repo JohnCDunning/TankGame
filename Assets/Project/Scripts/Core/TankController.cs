@@ -28,7 +28,11 @@ public class TankController : Photon.MonoBehaviour, IDamageable
 
     public void Damage()
     {
-        if (PhotonNetwork.isMasterClient)
+        if (PhotonNetwork.isMasterClient && !photonView.isSceneView)
+        {
+            RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+            PhotonNetwork.RaiseEvent(NetworkingEvents._OnPlayerDefeated, new object[]{photonView.viewID, photonView.owner.ID}, true, raiseEventOptions);
+        }else if (PhotonNetwork.isMasterClient)
         {
             RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
             PhotonNetwork.RaiseEvent(NetworkingEvents._OnDestroyEvent, new object[]{photonView.viewID}, true, raiseEventOptions);

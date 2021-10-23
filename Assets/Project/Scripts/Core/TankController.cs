@@ -7,7 +7,7 @@ using UnityEngine;
 public class TankController : MonoBehaviour
 {
     [SerializeField] private Rigidbody _Rigidbody;
-    [SerializeField] private float _MovementSpeed = 1000f;
+    [SerializeField] private float _MovementSpeed = 1f;
     [SerializeField] private float _RotationSpeed = 100f;
     [SerializeField] private Transform _Turret;
     [SerializeField] private Transform _Body;
@@ -23,7 +23,7 @@ public class TankController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _Rigidbody.velocity = _LastVelocity * Time.deltaTime;
+        _Rigidbody.velocity = _LastVelocity;
     }
 
     public void TurnTank(float turnDirection)
@@ -40,7 +40,13 @@ public class TankController : MonoBehaviour
 
     public void FireWeapon(Vector3 target)
     {
-        Vector3 turretPos = _TurrentShootPoint.position;
+      
+    }
+    
+    
+    /* partial for ai hit detection model
+     *
+     *  Vector3 turretPos = _TurrentShootPoint.position;
         Vector3 adjustedTarget = new Vector3(target.x, turretPos.y, target.z);
         Ray ray = new Ray(turretPos, adjustedTarget - turretPos);
         
@@ -48,12 +54,13 @@ public class TankController : MonoBehaviour
         {
             Debug.DrawLine(turretPos, hit.point, Color.blue, 5f);
 
-            Ray bounceRay = new Ray(hit.point, hit.normal);
+            Ray bounceRay = new Ray(hit.point, Vector3.Reflect( hit.point - turretPos,hit.normal));
             if (Physics.Raycast(bounceRay, out RaycastHit hitBounce))
             {
-
                 Debug.DrawLine(hit.point, hitBounce.point * 100f, Color.red, 5f);
             }
         }
-    }
+
+     * 
+     */
 }

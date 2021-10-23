@@ -16,9 +16,6 @@ public class Mine : Photon.MonoBehaviour
     private float _ExplosionRange = 4f;
     private void Update()
     {
-        if (!PhotonNetwork.isMasterClient)
-            return;
-        
         _DestroyTime += Time.deltaTime;
         if (!_HasDestroyedSelf && _DestroyTime >= _SelfDestroyTimer)
         {

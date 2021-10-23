@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.Serialization;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -11,7 +12,8 @@ public class TankController : Photon.MonoBehaviour, IDamageable
     [SerializeField] private float _RotationSpeed = 100f;
     [SerializeField] private Transform _Turret;
     [SerializeField] private Transform _Body;
-    [SerializeField] private Transform _TurrentShootPoint;
+    [PreviouslySerializedAs("_TurrentShootPoint")]
+    [SerializeField] private Transform _TurretShootPoint;
     [SerializeField] private Transform _MineDeployLocation;
     [SerializeField] private Animator _TurretRecoilAnimator;
 
@@ -57,7 +59,7 @@ public class TankController : Photon.MonoBehaviour, IDamageable
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient };
         object[] content = new object[]
         {
-            _TurrentShootPoint.position,
+            _TurretShootPoint.position,
             _Turret.rotation.eulerAngles
         };
         

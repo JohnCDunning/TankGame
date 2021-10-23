@@ -6,6 +6,7 @@ public class Projectile : MonoBehaviour
 {
     public Rigidbody rb;
     public float _MovementSpeed;
+    public float _ReflectionsRemaining = 1;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,14 +19,23 @@ public class Projectile : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward, out hit, 1))
         {
-
-            Vector3 incomingVec = hit.point - transform.position;
-            transform.forward = Vector3.Reflect(incomingVec, hit.normal);
+            Hit(hit.point,hit.normal);
+           
         }
 
         rb.velocity = transform.forward * _MovementSpeed;
-
-    
+    }
+    void Hit(Vector3 hit,Vector3 hitNormal)
+    {
+        if (_ReflectionsRemaining > 0)
+        {
+            Vector3 incomingVec = hit - transform.position;
+            transform.forward = Vector3.Reflect(incomingVec, hitNormal);
+            _ReflectionsRemaining--;
+            return;
+        }
+        //- The projectile will explode now
+        PhotonNetwork.Destroy(gameObject);
     }
  
 }

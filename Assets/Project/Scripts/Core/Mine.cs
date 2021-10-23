@@ -19,15 +19,18 @@ public class Mine : Photon.MonoBehaviour
     [SerializeField] private float _PulseCiel = 1f;
     private bool _CielReached = false;
 
+    [SerializeField] private MeshRenderer _TargetRenderer;
     private Material _TargetMaterial;
     
     
     private static readonly int _EmissionT = Shader.PropertyToID("EmissionT");
     private static readonly int _EmissionMaxT = Shader.PropertyToID("EmissionMaxT");
 
+    [SerializeField] private Light _Light;
+    
     private void Awake()
     {
-        _TargetMaterial = GetComponent<MeshRenderer>().material;
+        _TargetMaterial = _TargetRenderer.material;
         _PulseCiel = _SelfDestroyTimer / 4;
     }
 
@@ -51,7 +54,8 @@ public class Mine : Photon.MonoBehaviour
 
             }
         }
-        
+
+        _Light.intensity = Mathf.Lerp(1f, 5f, _PulseT / _PulseCiel);
         _TargetMaterial.SetFloat(_EmissionT, _PulseT);
         _TargetMaterial.SetFloat(_EmissionMaxT, _PulseCiel);
 

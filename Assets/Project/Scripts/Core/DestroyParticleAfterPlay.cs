@@ -9,6 +9,7 @@ public class DestroyParticleAfterPlay : MonoBehaviour
     void Start()
     {
         _DestroyDelay = _ParticleSystem.main.duration;
+        StartCoroutine(LateDestroy(_DestroyDelay));
     }
 
     private IEnumerator LateDestroy(float time)

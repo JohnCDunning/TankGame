@@ -13,6 +13,7 @@ public class TankController : Photon.MonoBehaviour, IDamageable
     [SerializeField] private Transform _Body;
     [SerializeField] private Transform _TurrentShootPoint;
     [SerializeField] private Transform _MineDeployLocation;
+    [SerializeField] private Animator _TurretRecoilAnimator;
 
     private Vector3 _LastVelocity = Vector3.zero;
     
@@ -62,6 +63,9 @@ public class TankController : Photon.MonoBehaviour, IDamageable
         
         
         PhotonNetwork.RaiseEvent(NetworkingEvents._CreateProjectileEvent, content, true, raiseEventOptions);
+
+        if (_TurretRecoilAnimator != null)
+            _TurretRecoilAnimator.SetTrigger("Shoot");
     }
 
     public void DeployMine()

@@ -23,7 +23,7 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
         {
 
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward, out hit, 1))
+            if (Physics.Raycast(transform.position, transform.forward, out hit, 0.5f))
             {
                 
                 if (hit.transform.gameObject.TryGetComponent(out IDamageable damageable))

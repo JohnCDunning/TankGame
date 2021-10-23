@@ -9721,7 +9721,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 74448859}
-  _MovementSpeed: 6
+  _MovementSpeed: 8
   _ReflectionsRemaining: 1
 --- !u!54 &74448859
 Rigidbody:
@@ -9750,8 +9750,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.36, y: 0.4, z: 1}
-  m_Center: {x: 0, y: 0, z: 0.18}
+  m_Size: {x: 0.36, y: 0.4, z: 0.7393587}
+  m_Center: {x: 0, y: 0, z: 0.04967937}
 --- !u!114 &3351436683661713103
 MonoBehaviour:
   m_ObjectHideFlags: 0

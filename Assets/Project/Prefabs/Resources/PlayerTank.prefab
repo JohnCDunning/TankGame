@@ -70,6 +70,7 @@ MonoBehaviour:
   _Turret: {fileID: 2975433998969312123}
   _Body: {fileID: 924493954788510447}
   _TurrentShootPoint: {fileID: 6828664792564267991}
+  _MineDeployLocation: {fileID: 6933638192859680358}
 --- !u!65 &924493954788510432
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -357,6 +358,36 @@ MonoBehaviour:
     InterpolateOption: 0
     InterpolateMoveTowardsSpeed: 1
     InterpolateLerpSpeed: 0
+--- !u!1 &1151015647775384909
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6933638192859680358}
+  m_Layer: 0
+  m_Name: Mine Location
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6933638192859680358
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1151015647775384909}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.044, z: -1.677}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6231566406073522658}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2277165929715648401
 GameObject:
   m_ObjectHideFlags: 0
@@ -664,6 +695,7 @@ Transform:
   - {fileID: 7504516632977863731}
   - {fileID: 8258987495426892774}
   - {fileID: 7591332451725166227}
+  - {fileID: 6933638192859680358}
   m_Father: {fileID: 924493954788510447}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

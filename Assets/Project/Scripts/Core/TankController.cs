@@ -12,6 +12,7 @@ public class TankController : Photon.MonoBehaviour
     [SerializeField] private Transform _Turret;
     [SerializeField] private Transform _Body;
     [SerializeField] private Transform _TurrentShootPoint;
+    [SerializeField] private Transform _MineDeployLocation;
 
     private Vector3 _LastVelocity = Vector3.zero;
     
@@ -42,6 +43,7 @@ public class TankController : Photon.MonoBehaviour
 
     
     private byte _CreateProjectileEvent = 0;
+    private byte _CreateMineEvent = 1;
     public void FireWeapon()
     {
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient };
@@ -53,6 +55,19 @@ public class TankController : Photon.MonoBehaviour
         
         
         PhotonNetwork.RaiseEvent(_CreateProjectileEvent, content, true, raiseEventOptions);
+    }
+
+    public void DeployMine()
+    {
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient };
+        object[] content = new object[]
+        {
+            _MineDeployLocation.position,
+            _MineDeployLocation.rotation.eulerAngles
+        };
+        
+        
+        PhotonNetwork.RaiseEvent(_CreateMineEvent, content, true, raiseEventOptions);
     }
 
     private void Start()
@@ -79,6 +94,14 @@ public class TankController : Photon.MonoBehaviour
             
             PhotonNetwork.InstantiateSceneObject("Projectile", pos, Quaternion.Euler(rot), 0,
                 null);
+        }else if (eventCode == _CreateMineEvent)
+        {
+            object[] data = (object[])content;
+            
+            Vector3 pos = (Vector3) data[0];
+            Vector3 rot = (Vector3) data[1];
+
+            PhotonNetwork.InstantiateSceneObject("Mine", pos, Quaternion.Euler(rot), 0, null);
         }
     }
     

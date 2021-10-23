@@ -14,8 +14,49 @@ public class Mine : Photon.MonoBehaviour
     private bool _HasDestroyedSelf;
 
     private float _ExplosionRange = 4f;
+
+    private float _PulseT = 0f;
+    [SerializeField] private float _PulseCiel = 1f;
+    private bool _CielReached = false;
+
+    private Material _TargetMaterial;
+    
+    
+    private static readonly int _EmissionT = Shader.PropertyToID("EmissionT");
+    private static readonly int _EmissionMaxT = Shader.PropertyToID("EmissionMaxT");
+
+    private void Awake()
+    {
+        _TargetMaterial = GetComponent<MeshRenderer>().material;
+        _PulseCiel = _SelfDestroyTimer / 4;
+    }
+
     private void Update()
     {
+        if (!_CielReached)
+        {
+            _PulseT += Time.deltaTime;
+            if (_PulseT >= _PulseCiel)
+            {
+                _CielReached = true;
+            }
+        }
+        else
+        {
+            _PulseT -= Time.deltaTime;
+            if (_PulseT <= 0f)
+            {
+                _CielReached = false;
+                _PulseCiel /= 2;
+
+            }
+        }
+        
+        _TargetMaterial.SetFloat(_EmissionT, _PulseT);
+        _TargetMaterial.SetFloat(_EmissionMaxT, _PulseCiel);
+
+
+
         _DestroyTime += Time.deltaTime;
         if (!_HasDestroyedSelf && _DestroyTime >= _SelfDestroyTimer)
         {

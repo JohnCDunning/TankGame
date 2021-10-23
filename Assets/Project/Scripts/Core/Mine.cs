@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Mine : Photon.MonoBehaviour
 {
-    [SerializeField] private float _SelfDestroyTimer = 0f;
+    [SerializeField] private float _SelfDestroyTimer = 10f;
     private float _DestroyTime;
     private bool _HasDestroyedSelf;
     private void Update()

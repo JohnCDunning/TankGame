@@ -70,7 +70,7 @@ MonoBehaviour:
   _RotationSpeed: 100
   _Turret: {fileID: 2975433998969312123}
   _Body: {fileID: 924493954788510447}
-  _TurrentShootPoint: {fileID: 6828664792564267991}
+  _TurretShootPoint: {fileID: 6828664792564267991}
   _MineDeployLocation: {fileID: 6933638192859680358}
   _TurretRecoilAnimator: {fileID: 1744517796663670915}
 --- !u!65 &924493954788510432

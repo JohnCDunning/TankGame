@@ -49,6 +49,5 @@ public class PlayerController : Photon.MonoBehaviour
             }
             
         }
-
     }
 }

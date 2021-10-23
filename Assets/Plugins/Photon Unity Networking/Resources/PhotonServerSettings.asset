@@ -42,5 +42,6 @@ MonoBehaviour:
   - PunRespawn
   - RequestForPickupItems
   - RequestForPickupTimes
+  - RunTurretAnimation
   - TaggedPlayer
   DisableAutoOpenWizard: 1

@@ -1266,6 +1266,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3351436683661713103, guid: 6acd3550cb12cd142a55effc5d684250, type: 3}
+      propertyPath: viewIdField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3351436683661713103, guid: 6acd3550cb12cd142a55effc5d684250, type: 3}
+      propertyPath: instantiationId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8383634864536131036, guid: 6acd3550cb12cd142a55effc5d684250, type: 3}
       propertyPath: m_Name
       value: Projectile

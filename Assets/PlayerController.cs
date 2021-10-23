@@ -15,7 +15,7 @@ public class PlayerController : Photon.MonoBehaviour
             _TankController.MoveTank(new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxisRaw("Vertical")));
             if (Input.GetMouseButtonDown(0))
             {
-                _TankController.FireWeapon(_LastPoint);
+                _TankController.FireWeapon();
             }
 
 

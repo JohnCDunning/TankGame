@@ -38,9 +38,9 @@ public class TankController : MonoBehaviour
         _Turret.rotation = Quaternion.Euler(0, rotation, 0f);
     }
 
-    public void FireWeapon(Vector3 target)
+    public void FireWeapon()
     {
-      
+        PhotonNetwork.Instantiate("Projectile", _TurrentShootPoint.position, _Turret.rotation, 0);
     }
     
     

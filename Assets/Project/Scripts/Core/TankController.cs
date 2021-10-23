@@ -64,8 +64,7 @@ public class TankController : Photon.MonoBehaviour, IDamageable
         
         PhotonNetwork.RaiseEvent(NetworkingEvents._CreateProjectileEvent, content, true, raiseEventOptions);
 
-        if (_TurretRecoilAnimator != null)
-            _TurretRecoilAnimator.SetTrigger("Shoot");
+        photonView.RPC("RunTurretAnimation", PhotonTargets.All);
     }
 
     public void DeployMine()
@@ -81,7 +80,11 @@ public class TankController : Photon.MonoBehaviour, IDamageable
         PhotonNetwork.RaiseEvent(NetworkingEvents._CreateMineEvent, content, true, raiseEventOptions);
     }
 
-
+    [PunRPC]
+    void RunTurretAnimation()
+    {
+        _TurretRecoilAnimator.SetTrigger("Shoot");
+    }
     /* partial for ai hit detection model
      *
      *  Vector3 turretPos = _TurrentShootPoint.position;

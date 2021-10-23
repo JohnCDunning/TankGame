@@ -24,7 +24,6 @@ public class Projectile : MonoBehaviour
                 Hit(hit.point, hit.normal);
 
             }
-
             rb.velocity = transform.forward * _MovementSpeed;
         }
     }

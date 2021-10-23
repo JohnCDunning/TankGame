@@ -24,7 +24,8 @@ public class TankController : Photon.MonoBehaviour
 
     private void FixedUpdate()
     {
-        _Rigidbody.velocity = _LastVelocity;
+        if (base.photonView.isMine)
+            _Rigidbody.velocity = _LastVelocity;
     }
 
     public void TurnTank(float turnDirection)

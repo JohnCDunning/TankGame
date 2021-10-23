@@ -12,15 +12,6 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
 
 
     private bool _FlaggedForDestruction;
-    // Start is called before the first frame update
-    private void Start()
-    {
-        PhotonNetwork.OnEventCall += OnEvent;
-    }
-    private void OnDestroy()
-    {
-        PhotonNetwork.OnEventCall -= OnEvent;
-    }
 
     // Update is called once per frame
     void FixedUpdate()
@@ -46,15 +37,6 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
             }
             rb.velocity = transform.forward * _MovementSpeed;
             
-        }
-    }
-
-    public void OnEvent(byte eventCode, object content, int senderId)
-    {
-        if (eventCode == NetworkingEvents._OnDestroyEvent)
-        {
-            object[] data = (object[]) content;
-            PhotonNetwork.Destroy(PhotonView.Find((int)data[0]));
         }
     }
 

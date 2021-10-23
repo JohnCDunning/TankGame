@@ -77,46 +77,7 @@ public class TankController : Photon.MonoBehaviour, IDamageable
         PhotonNetwork.RaiseEvent(NetworkingEvents._CreateMineEvent, content, true, raiseEventOptions);
     }
 
-    private void Start()
-    {
-        PhotonNetwork.OnEventCall += OnEvent;
-    }
 
-    private void OnDestroy()
-    {
-        PhotonNetwork.OnEventCall -= OnEvent;
-    }
-
-    public void OnEvent(byte eventCode, object content, int senderId)
-    {
-        Debug.Log("On Event");
-        
-        // Do something
-        if (eventCode == NetworkingEvents._CreateProjectileEvent)
-        {
-            object[] data = (object[])content;
-            
-            Vector3 pos = (Vector3) data[0];
-            Vector3 rot = (Vector3) data[1];
-            
-            PhotonNetwork.InstantiateSceneObject("Projectile", pos, Quaternion.Euler(rot), 0,
-                null);
-        }else if (eventCode == NetworkingEvents._CreateMineEvent)
-        {
-            object[] data = (object[])content;
-            
-            Vector3 pos = (Vector3) data[0];
-            Vector3 rot = (Vector3) data[1];
-
-            PhotonNetwork.InstantiateSceneObject("Mine", pos, Quaternion.Euler(rot), 0, null);
-        }else if (eventCode == NetworkingEvents._OnDestroyEvent)
-        {
-            object[] data = (object[]) content;
-            PhotonNetwork.Destroy(PhotonView.Find((int)data[0]));
-        }
-    }
-    
-    
     /* partial for ai hit detection model
      *
      *  Vector3 turretPos = _TurrentShootPoint.position;

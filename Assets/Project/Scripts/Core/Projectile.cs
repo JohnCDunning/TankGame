@@ -16,14 +16,17 @@ public class Projectile : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, 1))
+        if (PhotonNetwork.isMasterClient)
         {
-            Hit(hit.point,hit.normal);
-           
-        }
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, transform.forward, out hit, 1))
+            {
+                Hit(hit.point, hit.normal);
 
-        rb.velocity = transform.forward * _MovementSpeed;
+            }
+
+            rb.velocity = transform.forward * _MovementSpeed;
+        }
     }
     void Hit(Vector3 hit,Vector3 hitNormal)
     {
@@ -34,8 +37,9 @@ public class Projectile : MonoBehaviour
             _ReflectionsRemaining--;
             return;
         }
+        if (PhotonNetwork.isMasterClient)
         //- The projectile will explode now
-        PhotonNetwork.Destroy(gameObject);
+            PhotonNetwork.Destroy(gameObject);
     }
  
 }

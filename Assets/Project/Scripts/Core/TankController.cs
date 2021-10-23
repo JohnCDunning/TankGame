@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class TankController : MonoBehaviour
+public class TankController : Photon.MonoBehaviour
 {
     [SerializeField] private Rigidbody _Rigidbody;
     [SerializeField] private float _MovementSpeed = 1f;
@@ -14,6 +14,7 @@ public class TankController : MonoBehaviour
     [SerializeField] private Transform _TurrentShootPoint;
 
     private Vector3 _LastVelocity = Vector3.zero;
+    
     public void MoveTank(Vector3 direction)
     {
         _LastVelocity = _Body.forward * (direction.z * _MovementSpeed);
@@ -38,9 +39,46 @@ public class TankController : MonoBehaviour
         _Turret.rotation = Quaternion.Euler(0, rotation, 0f);
     }
 
+    
+    private byte _CreateProjectileEvent = 0;
     public void FireWeapon()
     {
-        PhotonNetwork.Instantiate("Projectile", _TurrentShootPoint.position, _Turret.rotation, 0);
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient };
+        object[] content = new object[]
+        {
+            _TurrentShootPoint.position,
+            _Turret.rotation.eulerAngles
+        };
+        
+        
+        PhotonNetwork.RaiseEvent(_CreateProjectileEvent, content, true, raiseEventOptions);
+    }
+
+    private void Start()
+    {
+        PhotonNetwork.OnEventCall += OnEvent;
+    }
+
+    private void OnDestroy()
+    {
+        PhotonNetwork.OnEventCall -= OnEvent;
+    }
+
+    public void OnEvent(byte eventCode, object content, int senderId)
+    {
+        Debug.Log("On Event");
+        
+        // Do something
+        if (eventCode == _CreateProjectileEvent)
+        {
+            object[] data = (object[])content;
+            
+            Vector3 pos = (Vector3) data[0];
+            Vector3 rot = (Vector3) data[1];
+            
+            PhotonNetwork.InstantiateSceneObject("Projectile", pos, Quaternion.Euler(rot), 0,
+                null);
+        }
     }
     
     

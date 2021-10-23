@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 924493954788510443}
   - component: {fileID: 924493954788510442}
   - component: {fileID: 924493954788510445}
-  - component: {fileID: 5525494926253874326}
   m_Layer: 0
   m_Name: PlayerTank
   m_TagString: Untagged
@@ -105,7 +104,7 @@ MonoBehaviour:
   ownershipTransfer: 2
   ObservedComponents:
   - {fileID: 924493954788510442}
-  - {fileID: 5525494926253874326}
+  - {fileID: 0}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
   instantiationId: -1
@@ -174,7 +173,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    ExtrapolateOption: 2
+    ExtrapolateOption: 0
     ExtrapolateSpeed: 1
     ExtrapolateIncludingRoundTripTime: 1
     ExtrapolateNumberOfStoredPositions: 1
@@ -205,20 +204,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 1
---- !u!114 &5525494926253874326
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 924493954788510435}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizeVelocity: 1
-  m_SynchronizeAngularVelocity: 0
 --- !u!1 &1046410941120150871
 GameObject:
   m_ObjectHideFlags: 0

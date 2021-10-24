@@ -34,6 +34,10 @@ public class ServerController : Photon.MonoBehaviour
         else
             _PlayersAliveDictionary[otherPlayer] = true;
     }
+    public virtual void OnJoinedRoom()
+    {
+        PlayerConnected(PhotonNetwork.player);
+    }
     
     public void PlayerDisconnected(PhotonPlayer otherPlayer)
     {
@@ -51,7 +55,6 @@ public class ServerController : Photon.MonoBehaviour
         {
             PlayerDisconnected(otherPlayer);
         }
-            
     }
     public virtual void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
     {

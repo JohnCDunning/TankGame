@@ -85,9 +85,7 @@ public class NetworkingEvents : MonoBehaviour
             object[] data = (object[]) content;
             string scene = (string) data[0];
             StartCoroutine(ServerController.Instance.LoadSceneAsync(scene));
-            
-            
-          
+
         }
     }
     

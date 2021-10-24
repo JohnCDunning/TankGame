@@ -14,17 +14,30 @@ public class ServerController : Photon.MonoBehaviour
     private Dictionary<PhotonPlayer, bool> _PlayersAliveDictionary = new Dictionary<PhotonPlayer, bool>();
 
     [SerializeField] private GameObject _Canvas;
+    private string _CurrentScene = "";
+    
+    
     
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            _CurrentScene = SceneManager.GetActiveScene().name;
             DontDestroyOnLoad(this.gameObject);
         }else 
             Destroy(this);
     }
 
+    [PunRPC]
+    public void ValidateHostScene(string currentHostScene)
+    {
+        if (SceneManager.GetActiveScene().name != currentHostScene)
+        {
+            StartCoroutine(LoadSceneAsync(currentHostScene));
+        }
+    }
+    
     public void PlayerConnected(PhotonPlayer otherPlayer)
     {
         if (!_PlayersAliveDictionary.ContainsKey(otherPlayer))
@@ -36,7 +49,8 @@ public class ServerController : Photon.MonoBehaviour
     }
     public virtual void OnJoinedRoom()
     {
-        PlayerConnected(PhotonNetwork.player);
+        if (PhotonNetwork.isMasterClient)
+            PlayerConnected(PhotonNetwork.player);
     }
     
     public void PlayerDisconnected(PhotonPlayer otherPlayer)
@@ -59,7 +73,15 @@ public class ServerController : Photon.MonoBehaviour
     public virtual void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
     {
         if (PhotonNetwork.isMasterClient)
+        {
             PlayerConnected(newPlayer);
+            
+            string scene = SceneManager.GetActiveScene().name;
+            RaiseEventOptions raiseEventOptions = new RaiseEventOptions {Receivers = ReceiverGroup.Others};
+            PhotonNetwork.RaiseEvent(NetworkingEvents._ValidateScene, new object[] {scene}, true, raiseEventOptions);
+        }
+
+
     }
 
     public void CheckPlayerStatus()
@@ -115,6 +137,8 @@ public class ServerController : Photon.MonoBehaviour
     {
         PhotonNetwork.LoadLevel(scene);
         yield return new WaitForFixedUpdate();
+
+        _CurrentScene = scene;
         GameObject.FindObjectOfType<OnJoinedInstantiate>().OnJoinedRoom();
     }
 

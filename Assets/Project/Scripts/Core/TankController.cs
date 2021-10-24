@@ -24,6 +24,21 @@ public class TankController : Photon.MonoBehaviour, IDamageable
 
     private Vector3 _LastVelocity = Vector3.zero;
 
+    public delegate void OnDestroyed();
+    public OnDestroyed _OnDestroyed;
+
+    private void OnDestroy()
+    {
+        _OnDestroyed?.Invoke();
+
+        if (_OnDestroyed != null)
+            foreach (var d in _OnDestroyed.GetInvocationList())
+            {
+                _OnDestroyed -= (OnDestroyed) d;
+            }
+    }
+
+
     public void MoveTank(Vector3 direction)
     {
         _LastVelocity = _Body.forward * (direction.z * _MovementSpeed);

@@ -6,6 +6,7 @@ public enum ExplosionSize
 {
     small,
     medium,
-    large
+    large,
+    huge
 }
 

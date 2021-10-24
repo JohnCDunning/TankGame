@@ -75,13 +75,14 @@ public class TankController : Photon.MonoBehaviour, IDamageable
 
 
 
-    public void FireWeapon()
+    public void FireWeapon(int bounceCount)
     {
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions {Receivers = ReceiverGroup.MasterClient};
         object[] content = new object[]
         {
             _TurretShootPoint.position,
-            _Turret.rotation.eulerAngles
+            _Turret.rotation.eulerAngles,
+            bounceCount
         };
 
 

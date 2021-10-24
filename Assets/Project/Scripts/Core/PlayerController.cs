@@ -7,6 +7,7 @@ public class PlayerController : Photon.MonoBehaviour
 {
     [SerializeField] private TankController _TankController;
     private Vector3 _LastPoint = Vector3.zero;
+    [SerializeField] private int _ProjectileBounceCount = 2;
     private void Update()
     {
         if (base.photonView.isMine)
@@ -15,7 +16,7 @@ public class PlayerController : Photon.MonoBehaviour
             _TankController.MoveTank(new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxisRaw("Vertical")));
             if (Input.GetMouseButtonDown(0))
             {
-                _TankController.FireWeapon();
+                _TankController.FireWeapon(_ProjectileBounceCount);
             }
             if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Space))
                 _TankController.DeployMine();

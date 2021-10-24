@@ -42,9 +42,10 @@ public class NetworkingEvents : MonoBehaviour
             
             Vector3 pos = (Vector3) data[0];
             Vector3 rot = (Vector3) data[1];
+            int bounces = (int)data[2];
             
             PhotonNetwork.InstantiateSceneObject("Projectile", pos, Quaternion.Euler(rot), 0,
-                null);
+                null).GetComponent<Projectile>()._ReflectionsRemaining = bounces;
         }else if (eventCode == NetworkingEvents._CreateMineEvent)
         {
             object[] data = (object[])content;

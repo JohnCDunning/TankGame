@@ -48,4 +48,5 @@ MonoBehaviour:
   - SpawnExplosion
   - TaggedPlayer
   - ValidateHostScene
+  - HitDamage
   DisableAutoOpenWizard: 1

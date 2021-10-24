@@ -11,14 +11,14 @@ public class AIController : Photon.MonoBehaviour
     [SerializeField] private TankController _TankController;
     [SerializeField] private float _LookSpeed = 100f;
     private float _TargetSearchRate = 1f;
-    private float _Cooldown = 3f;
-    private float _CooldownTimer = 3f;
+    [SerializeField] private float _ShootCooldown = 3f;
+    private float _ShootCooldownTimer = 1000;
     [SerializeField] private bool _UseDeflection = true;
     [SerializeField] private bool _UseMovement = true;
     [SerializeField] private int _DeflectionCount = 5;
     private bool CanShoot()
     {
-        return _CooldownTimer > _Cooldown;
+        return _ShootCooldownTimer > _ShootCooldown;
     }
     bool CanSeeTarget(TankController tank)
     {
@@ -50,8 +50,6 @@ public class AIController : Photon.MonoBehaviour
                 
                                 
                 Vector3 barrelForward = _TankController.ShootPoint.forward;
-                
-                Ray calcRay = new Ray((turretPos - barrelForward) + new Vector3(0,barrelForward.y,0f), _TankController.Turret.forward);
 
                 Vector3 lastPosition = (turretPos - barrelForward) + new Vector3(0,barrelForward.y,0f);
                 Vector3 lastDirection = _TankController.Turret.forward;
@@ -60,7 +58,6 @@ public class AIController : Photon.MonoBehaviour
                 
                 for (int i = 0; i < _DeflectionCount; i++)
                 {
-                    
                     if (Physics.Raycast(lastPosition,lastDirection , out lastHit, float.MaxValue))
                     {
                         
@@ -252,10 +249,10 @@ public class AIController : Photon.MonoBehaviour
             if (_CurrentTarget != null )
             {
                 bool canSee =  CanSeeTarget(_CurrentTarget);
-                if (_CooldownTimer >= _Cooldown && canSee)
+                if (_ShootCooldownTimer >= _ShootCooldown && canSee)
                 {
                     _TankController.FireWeapon(_DeflectionCount);
-                    _CooldownTimer = 0f;
+                    _ShootCooldownTimer = 0f;
                     
                 }
                 else if (_RandomLookTimer > _RandomLook && !canSee)
@@ -274,7 +271,7 @@ public class AIController : Photon.MonoBehaviour
                     _TankController.TurnTurret(_CurrentTarget.transform.position,_LookSpeed * Time.deltaTime);
                 }
             }
-            _CooldownTimer += Time.deltaTime;
+            _ShootCooldownTimer += Time.deltaTime;
             _RandomLookTimer += Time.deltaTime;
 
         

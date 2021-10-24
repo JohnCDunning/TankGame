@@ -8,12 +8,15 @@ public class AIController : Photon.MonoBehaviour
 {
     [SerializeField] private TankController _TankController;
     [SerializeField] private float _LookSpeed = 100f;
-    [SerializeField] private float _TargetSearchRate = 3f;
+    private float _TargetSearchRate = 1.5f;
     private float _Cooldown = 3f;
     private float _CooldownTimer = 3f;
 
     bool CanSeeTarget(TankController tank)
     {
+        if (tank == null)
+            return false;
+        
         Vector3 turretPos = _TankController.ShootPoint.position;
         Vector3 target = tank.transform.position;
         Vector3 adjustedTarget = new Vector3(target.x, turretPos.y, target.z);
@@ -31,6 +34,9 @@ public class AIController : Photon.MonoBehaviour
     }
     public TankController FindClosestOrValidTarget(TankController[] tanks)
     {
+        if (tanks == null || tanks.Length == 0)
+            return null;
+        
         TankController[] distanceSorted = tanks.OrderBy((d) => (d.transform.position - transform.position).sqrMagnitude).ToArray();
         TankController distanceObject = distanceSorted.First();
         

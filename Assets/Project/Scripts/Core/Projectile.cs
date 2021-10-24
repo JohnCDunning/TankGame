@@ -15,6 +15,11 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
     [SerializeField] private ParticleSystem _ReflectPS;
     [SerializeField] private DeathTimer _TrailPSDeathTimer;
     [SerializeField] private ExplosionSize _ExplosionSize;
+
+    void Update()
+    {
+        rb.velocity = transform.forward * _MovementSpeed;
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -37,7 +42,7 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
                     Hit(hit.point, hit.normal);
                 
             }
-            rb.velocity = transform.forward * _MovementSpeed;
+           
             
         }
     }

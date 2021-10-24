@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(HitDamage))]
-public class WorldObject : MonoBehaviour, IDamageable
+public class WorldObject : Photon.MonoBehaviour, IDamageable
 {
     public float _Health = 1;
     [SerializeField] private ExplosionSize _ExplosionSize;
@@ -14,12 +14,18 @@ public class WorldObject : MonoBehaviour, IDamageable
     }
     public void Damage()
     {
-        hitDamage.ObjectHit();
+        photonView.RPC("HitDamage",PhotonTargets.All);
+
         _Health -= 1;
         if (_Health <= 0)
         {
             AppManager._Instance.RequestExplosion(_ExplosionSize, transform.position);
             PhotonNetwork.Destroy(gameObject);
         }
+    }
+    [PunRPC]
+    void HitDamage()
+    {
+        hitDamage.ObjectHit();
     }
 }

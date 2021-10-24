@@ -17,7 +17,7 @@ public class PlayerController : Photon.MonoBehaviour
             {
                 _TankController.FireWeapon();
             }
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Space))
                 _TankController.DeployMine();
 
 

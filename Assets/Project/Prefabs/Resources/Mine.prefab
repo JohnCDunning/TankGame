@@ -308,7 +308,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _SelfDestroyTimer: 4
-  _ParticlePrefab: {fileID: 4691328780219004607, guid: 88fc640ce11cf95438f8b48eb2946b8c, type: 3}
+  _ParticlePrefab: {fileID: 1995101495317466137, guid: 9ec6d871e99f78242be16104493519a5, type: 3}
   _PulseCiel: 1
   _TargetRenderer: {fileID: 7099223037160707664}
   _Light: {fileID: 8776571622072672460}

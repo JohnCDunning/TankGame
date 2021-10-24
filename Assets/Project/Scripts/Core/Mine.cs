@@ -85,8 +85,7 @@ public class Mine : Photon.MonoBehaviour
     private void Explode()
     {
         _HasDestroyedSelf = true;
-        AppManager._Instance.SpawnExplosion(ExplosionSize.large, transform.position);
-        //Instantiate(_ParticlePrefab,this.transform.position, quaternion.Euler(-90, 0, 0), null);
+        AppManager._Instance.RequestExplosion(ExplosionSize.large, transform.position);
         
         if (photonView.isMine)
         {

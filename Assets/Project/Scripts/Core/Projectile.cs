@@ -61,7 +61,8 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
    
     public void Damage()
     {
-        photonView.RPC("Explode", PhotonTargets.All);
+        AppManager._Instance.RequestExplosion(_ExplosionSize, transform.position);
+        photonView.RPC("DetachSmokeRPC", PhotonTargets.All);
 
         _IsDestroyed = true;
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
@@ -75,11 +76,10 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
         _ReflectPS.Play();
     }
     [PunRPC]
-    void Explode()
+    void DetachSmokeRPC()
     {
         _TrailPSDeathTimer.transform.SetParent(null);
         _TrailPSDeathTimer.StartDeathTimer();
-        AppManager._Instance.SpawnExplosion(_ExplosionSize, transform.position);
     }
 
 }

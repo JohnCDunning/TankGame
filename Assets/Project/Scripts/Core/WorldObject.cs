@@ -11,7 +11,7 @@ public class WorldObject : MonoBehaviour, IDamageable
         _Health -= 1;
         if (_Health <= 0)
         {
-            AppManager._Instance.SpawnExplosion(_ExplosionSize, transform.position);
+            AppManager._Instance.RequestExplosion(_ExplosionSize, transform.position);
             PhotonNetwork.Destroy(gameObject);
         }
     }

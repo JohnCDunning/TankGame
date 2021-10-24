@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AppManager : MonoBehaviour
+public class AppManager : Photon.MonoBehaviour
 {
     public static AppManager _Instance;
 
@@ -15,6 +15,12 @@ public class AppManager : MonoBehaviour
         _Instance = this;
     }
 
+
+    public void RequestExplosion(ExplosionSize explosionSize, Vector3 position)
+    {
+        photonView.RPC("SpawnExplosion", PhotonTargets.All, explosionSize,position);
+    }
+    [PunRPC]
     public void SpawnExplosion(ExplosionSize explosionSize, Vector3 position)
     {
         for (int i = 0; i < _ExplosionObjects.Length; i++)

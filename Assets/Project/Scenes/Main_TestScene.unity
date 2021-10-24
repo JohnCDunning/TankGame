@@ -2428,6 +2428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3c491b49231f824fba7bf0f1c6a6ac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _Volume: {fileID: 1178131806}
   _ExplosionObjects:
   - _ExplosionSize: 0
     _ExplosionPrefab: {fileID: 5700725773342249615, guid: ebf7cb505738f7f4fac9d95e28d07d3b, type: 3}

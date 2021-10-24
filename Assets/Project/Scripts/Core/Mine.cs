@@ -26,6 +26,9 @@ public class Mine : Photon.MonoBehaviour
     private static readonly int _EmissionT = Shader.PropertyToID("EmissionT");
     private static readonly int _EmissionMaxT = Shader.PropertyToID("EmissionMaxT");
 
+    private float _ArmingDelay = 0.5f;
+    private float _ArmingTimer = 0f;
+    
     [SerializeField] private Light _Light;
     
     private void Awake()
@@ -36,6 +39,14 @@ public class Mine : Photon.MonoBehaviour
 
     private void Update()
     {
+
+
+        if (_ArmingTimer < _ArmingDelay)
+        {
+            _ArmingTimer += Time.deltaTime;
+            return;
+        }
+
         if (!_CielReached)
         {
             _PulseT += Time.deltaTime;
@@ -60,11 +71,14 @@ public class Mine : Photon.MonoBehaviour
         _TargetMaterial.SetFloat(_EmissionMaxT, _PulseCiel);
 
 
-
-        _DestroyTime += Time.deltaTime;
-        if (!_HasDestroyedSelf && _DestroyTime >= _SelfDestroyTimer)
+        if (photonView.isMine)
         {
-            Explode();
+
+            _DestroyTime += Time.deltaTime;
+            if (!_HasDestroyedSelf && _DestroyTime >= _SelfDestroyTimer)
+            {
+                Explode();
+            }
         }
     }
 
@@ -90,6 +104,9 @@ public class Mine : Photon.MonoBehaviour
 
     private void OnTriggerEnter(Collider col)
     {
+        if (_ArmingTimer < _ArmingDelay)
+            return;
+        
         if (PhotonNetwork.isMasterClient && col.gameObject.TryGetComponent(out TankController tankController))
         {
             Explode();

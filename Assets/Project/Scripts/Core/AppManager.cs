@@ -28,15 +28,12 @@ public class AppManager : Photon.MonoBehaviour
         }
     }
 
-    IEnumerator ScreenEffect(ExplosionSize size)
+    IEnumerator ScreenEffect()
     {
 
-        float target = 0f;
-        float time = 0f;
+        float target = .1f;
+        float time = 0.2f;
         float t = 0f;
-            
-        target = .1f;
-        time = 0.2f;
 
         while (t < time)
         {
@@ -61,7 +58,7 @@ public class AppManager : Photon.MonoBehaviour
     [PunRPC]
     public void SpawnExplosion(ExplosionSize explosionSize, Vector3 position)
     {
-        StartCoroutine(ScreenEffect(explosionSize));
+        StartCoroutine(ScreenEffect());
         for (int i = 0; i < _ExplosionObjects.Length; i++)
         {
             if(_ExplosionObjects[i]._ExplosionSize == explosionSize)

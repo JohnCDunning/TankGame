@@ -12,7 +12,8 @@ public class AIController : Photon.MonoBehaviour
     private float _TargetSearchRate = 1f;
     private float _Cooldown = 3f;
     private float _CooldownTimer = 3f;
-
+    [SerializeField] private bool _UseDeflection = true;
+    [SerializeField] private bool _UseMovement = true;
     private bool CanShoot()
     {
         return _CooldownTimer > _Cooldown;
@@ -43,7 +44,7 @@ public class AIController : Photon.MonoBehaviour
                     return true;
                 }
             }
-            else // test deflect
+            else if (_UseDeflection)// test deflect
             {
                 Vector3 barrelForward = _TankController.ShootPoint.forward;
                 

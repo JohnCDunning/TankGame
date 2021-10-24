@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = System.Random;
@@ -20,8 +21,9 @@ public class AIController : Photon.MonoBehaviour
     {
         return _ShootCooldownTimer > _ShootCooldown;
     }
-    bool CanSeeTarget(TankController tank)
+    bool CanSeeTarget(TankController tank, out bool aimingAtTarget)
     {
+        aimingAtTarget = false;
         if (tank == null)
             return false;
         
@@ -35,20 +37,35 @@ public class AIController : Photon.MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue))
         {
            
-            if (hit.transform.gameObject.TryGetComponent(out TankController other))
+            if (hit.transform.TryGetComponent(out TankController other))
             {
-                if (other == tank)
-                    return true;
-                else if (other.photonView.owner != photonView.owner)
+                if (Physics.Raycast(turretPos, _TankController.Turret.forward, out RaycastHit aimedHit, float.MaxValue))
                 {
-                    _CurrentTarget = other;
-                    return true;
+                    if (aimedHit.transform.TryGetComponent<TankController>(out var aimedTankController))
+                    {
+                        if (aimedTankController.photonView.owner != photonView.owner)
+                        {
+                            aimingAtTarget = true;
+                            _CurrentTarget = aimedTankController;
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    aimingAtTarget = false;
+                    
+                    if (other == tank)
+                        return true;
+                    else if (other.photonView.owner != photonView.owner)
+                    {
+                        _CurrentTarget = other;
+                        return true;
+                    }
                 }
             }
-            else if (_UseDeflection)// test deflect
+            else if (_UseDeflection)
             {
-                
-                                
                 Vector3 barrelForward = _TankController.ShootPoint.forward;
 
                 Vector3 lastPosition = (turretPos - barrelForward) + new Vector3(0,barrelForward.y,0f);
@@ -61,14 +78,24 @@ public class AIController : Photon.MonoBehaviour
                     if (Physics.Raycast(lastPosition,lastDirection , out lastHit, float.MaxValue))
                     {
                         
-                        if (lastHit.transform.gameObject.TryGetComponent(out TankController calcOther))
+                        if (lastHit.transform.TryGetComponent(out TankController calcOther))
                         {
                             if (calcOther.photonView.owner != photonView.owner)
                             {
                                 Debug.DrawLine(lastPosition, lastHit.point, Color.red, 0.2f);
                                 _CurrentTarget = calcOther;
+                                aimingAtTarget = true;
                                 return true;
                             }
+                            else
+                            {
+                                aimingAtTarget = false;
+                                return false;
+                            }
+                        }else if (lastHit.transform.TryGetComponent<IDamageable>(out IDamageable damageable))
+                        {
+                            aimingAtTarget = false;
+                            return false;
                         }
                         else
                         {
@@ -79,64 +106,9 @@ public class AIController : Photon.MonoBehaviour
                             lastPosition = lastHit.point;
                         }
                     }
-
-
                 }
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-
-                //Debug.DrawRay(calcRay.origin, calcRay.direction * 1000f, Color.cyan, 1f);
-               //RaycastHit calchit;
-               //if (Physics.Raycast(calcRay, out calchit, float.MaxValue))
-               //{
-               //    Debug.DrawLine(calcRay.origin, calchit.point, Color.blue, 0.2f);
-               //    if (hit.transform.gameObject.TryGetComponent(out TankController calcOther))
-               //    {
-               //        if (calcOther.photonView.owner != photonView.owner)
-               //        {
-               //            _CurrentTarget = calcOther;
-               //            return true;
-               //        }
-               //    }
-               //    else
-               //    {
-               //        
-               //        Vector3 deflect = Vector3.Reflect(calchit.point - turretPos, calchit.normal).normalized;
-               //        Vector3 deflectModified =
-               //            new Vector3(deflect.x,0f, deflect.z); 
-               //        
-               //        if (Physics.Raycast(calchit.point, deflectModified, out RaycastHit hitBounce, float.MaxValue))
-               //        {
-               //            
-               //            if (hitBounce.transform.gameObject.TryGetComponent(out TankController otherDeflectTank) && otherDeflectTank.photonView.owner != this.photonView.owner)
-               //            {
-               //                Debug.DrawLine(calchit.point, hitBounce.point, Color.red, 0.2f);
-               //                Debug.Log("Found Target");
-               //                _DeflectTarget = calchit.point;
-               //                _CurrentTarget = otherDeflectTank;
-               //                return true;
-               //            }
-               //            else
-               //            {
-               //                Debug.DrawLine(calchit.point, hitBounce.point, Color.blue, 0.2f);
-               //            }
-               //        }
-               //    }
-               // }
             }
         }
-
         return false;
     }
     public TankController FindClosestOrValidTarget(TankController[] tanks)
@@ -149,7 +121,7 @@ public class AIController : Photon.MonoBehaviour
         
         foreach (var tank in distanceSorted)
         {
-            if (CanSeeTarget(tank))
+            if (CanSeeTarget(tank, out bool aimingAtTarget))
             {
                 return tank;
             }
@@ -248,8 +220,8 @@ public class AIController : Photon.MonoBehaviour
             
             if (_CurrentTarget != null )
             {
-                bool canSee =  CanSeeTarget(_CurrentTarget);
-                if (_ShootCooldownTimer >= _ShootCooldown && canSee)
+                bool canSee =  CanSeeTarget(_CurrentTarget, out bool aimingAtTarget);
+                if (_ShootCooldownTimer >= _ShootCooldown && aimingAtTarget)
                 {
                     _TankController.FireWeapon(_DeflectionCount);
                     _ShootCooldownTimer = 0f;

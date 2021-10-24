@@ -3,15 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = System.Random;
 
 public class AIController : Photon.MonoBehaviour
 {
     [SerializeField] private TankController _TankController;
     [SerializeField] private float _LookSpeed = 100f;
-    private float _TargetSearchRate = 1.5f;
+    private float _TargetSearchRate = 1f;
     private float _Cooldown = 3f;
     private float _CooldownTimer = 3f;
 
+    private bool CanShoot()
+    {
+        return _CooldownTimer > _Cooldown;
+    }
+    
     bool CanSeeTarget(TankController tank)
     {
         if (tank == null)
@@ -20,13 +26,67 @@ public class AIController : Photon.MonoBehaviour
         Vector3 turretPos = _TankController.ShootPoint.position;
         Vector3 target = tank.transform.position;
         Vector3 adjustedTarget = new Vector3(target.x, turretPos.y, target.z);
+        
+        
         Ray ray = new Ray(turretPos, adjustedTarget - turretPos);
             
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue))
         {
-            if (hit.transform.gameObject.TryGetComponent(out TankController other) && other == tank)
+           
+            if (hit.transform.gameObject.TryGetComponent(out TankController other))
             {
-                return true;
+                if (other == tank)
+                    return true;
+                else if (other.photonView.owner != photonView.owner)
+                {
+                    _CurrentTarget = other;
+                    return true;
+                }
+            }
+            else // test deflect
+            {
+                Vector3 barrelForward = _TankController.ShootPoint.forward;
+                
+                Ray calcRay = new Ray((turretPos - barrelForward) + new Vector3(0,barrelForward.y,0f), _TankController.Turret.forward);
+                //Debug.DrawRay(calcRay.origin, calcRay.direction * 1000f, Color.cyan, 1f);
+                RaycastHit calchit;
+                if (Physics.Raycast(calcRay, out calchit, float.MaxValue))
+                {
+                    Debug.DrawLine(calcRay.origin, calchit.point, Color.blue, 0.2f);
+                    if (hit.transform.gameObject.TryGetComponent(out TankController calcOther))
+                    {
+                        if (calcOther.photonView.owner != photonView.owner)
+                        {
+                            _CurrentTarget = calcOther;
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        
+                        Vector3 deflect = Vector3.Reflect(calchit.point - turretPos, calchit.normal).normalized;
+                        Vector3 deflectModified =
+                            new Vector3(deflect.x,0f, deflect.z); 
+                        
+                        
+                        if (Physics.Raycast(calchit.point, deflectModified, out RaycastHit hitBounce, float.MaxValue))
+                        {
+                            
+                            if (hitBounce.transform.gameObject.TryGetComponent(out TankController otherDeflectTank) && otherDeflectTank.photonView.owner != this.photonView.owner)
+                            {
+                                Debug.DrawLine(calchit.point, hitBounce.point, Color.red, 0.2f);
+                                Debug.Log("Found Target");
+                                _DeflectTarget = calchit.point;
+                                _CurrentTarget = otherDeflectTank;
+                                return true;
+                            }
+                            else
+                            {
+                                Debug.DrawLine(calchit.point, hitBounce.point, Color.blue, 0.2f);
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -51,6 +111,7 @@ public class AIController : Photon.MonoBehaviour
         return distanceObject;
     }
     
+    
 
     private void OnDestroy()
     {
@@ -59,6 +120,8 @@ public class AIController : Photon.MonoBehaviour
 
     private TankController _CurrentTarget = null;
     private bool _Running = false;
+    private Vector3 _DeflectTarget = Vector3.zero;
+    
     private IEnumerator UpdateTargets()
     {
         while (_Running)
@@ -72,8 +135,11 @@ public class AIController : Photon.MonoBehaviour
         }
 
     }
-    
-    
+
+    private float _RandomLook = 0.5f;
+    private float _RandomLookTimer = 0.5f;
+
+    private Vector3 _RandomLookPos = Vector3.zero;
     private void Update()
     {
         // look for player
@@ -87,16 +153,33 @@ public class AIController : Photon.MonoBehaviour
             
             if (_CurrentTarget != null )
             {
-                if (_CooldownTimer >= _Cooldown && CanSeeTarget(_CurrentTarget))
+                bool canSee =  CanSeeTarget(_CurrentTarget);
+                if (_CooldownTimer >= _Cooldown && canSee)
                 {
                     _TankController.FireWeapon();
                     _CooldownTimer = 0f;
+                    
+                }
+                else if (_RandomLookTimer > _RandomLook && !canSee)
+                {
+                    _RandomLookPos = _CurrentTarget.transform.position + ( UnityEngine.Random.insideUnitSphere * UnityEngine.Random.Range(-25,25f));
+                    _RandomLookTimer = 0f;
                 }
                 
-                _TankController.TurnTurret(_CurrentTarget.transform.position,_LookSpeed * Time.deltaTime);
-                
+                if (!canSee)
+                {
+                    _TankController.TurnTurret(_RandomLookPos,_LookSpeed * Time.deltaTime);
+                }
+
+                if (canSee)
+                {
+                    _TankController.TurnTurret(_CurrentTarget.transform.position,_LookSpeed * Time.deltaTime);
+                }
+
+
             }
             _CooldownTimer += Time.deltaTime;
+            _RandomLookTimer += Time.deltaTime;
             
         }
 

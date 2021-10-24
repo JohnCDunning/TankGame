@@ -26,7 +26,7 @@ public class ServerController : Photon.MonoBehaviour
             _CurrentScene = SceneManager.GetActiveScene().name;
             DontDestroyOnLoad(this.gameObject);
         }else 
-            Destroy(this);
+            Destroy(this.gameObject);
     }
 
     [PunRPC]
@@ -106,7 +106,7 @@ public class ServerController : Photon.MonoBehaviour
     public void OnPlayerDefeated(int playerID)
     {
         if (!PhotonNetwork.isMasterClient)
-            return;;
+            return;
         
         PhotonPlayer player = PhotonNetwork.playerList.First(i => i.ID == playerID);
         if (!_PlayersAliveDictionary.ContainsKey(player))
@@ -135,11 +135,14 @@ public class ServerController : Photon.MonoBehaviour
 
     public IEnumerator LoadSceneAsync (string scene)
     {
+        
         PhotonNetwork.LoadLevel(scene);
         yield return new WaitForFixedUpdate();
 
         _CurrentScene = scene;
+        
         GameObject.FindObjectOfType<OnJoinedInstantiate>().OnJoinedRoom();
+        
     }
 
     public void ServerRestart()

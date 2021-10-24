@@ -21,8 +21,6 @@ public class HUDController : Photon.MonoBehaviour
         {
             if (photonView != null)
             {
-                Debug.Log("Initialized");
-                
                 TankController[] otherTanks = GameObject.FindObjectsOfType<TankController>()
                     .Where(i => i.photonView.isSceneView).ToArray();
                 

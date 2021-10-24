@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ExplosionParticles
+  m_Name: Unlit Particles
   m_Shader: {fileID: -6465566751694194690, guid: 1a42bac488930cc44be6571a1b588efb, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4

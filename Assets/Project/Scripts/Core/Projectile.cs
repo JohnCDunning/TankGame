@@ -12,7 +12,7 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
 
 
     private bool _FlaggedForDestruction;
-
+    [SerializeField] private ParticleSystem _ReflectPS;
     [SerializeField] private ExplosionSize _ExplosionSize;
     // Update is called once per frame
     void FixedUpdate()
@@ -48,6 +48,7 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
             Vector3 incomingVec = hit - transform.position;
             transform.forward = Vector3.Reflect(incomingVec, hitNormal);
             _ReflectionsRemaining--;
+            _ReflectPS.Play();
             return;
         }
 
@@ -63,6 +64,7 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
 
     public void Damage()
     {
+        AppManager._Instance.SpawnExplosion(_ExplosionSize, transform.position);
         _IsDestroyed = true;
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent(NetworkingEvents._OnDestroyEvent, new object[]{photonView.viewID}, true, raiseEventOptions);

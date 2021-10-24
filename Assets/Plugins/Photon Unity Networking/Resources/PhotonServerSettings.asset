@@ -32,10 +32,12 @@ MonoBehaviour:
   - ColorRpc
   - DestroyRpc
   - DoJump
+  - Explode
   - Flash
   - InstantiateRpc
   - Marco
   - PickupItemInit
+  - PlayReflectPS
   - Polo
   - PunPickup
   - PunPickupSimple
@@ -43,6 +45,7 @@ MonoBehaviour:
   - RequestForPickupItems
   - RequestForPickupTimes
   - RunTurretAnimation
+  - SpawnExplosion
   - TaggedPlayer
-  - LoadScene
+  - ValidateHostScene
   DisableAutoOpenWizard: 1

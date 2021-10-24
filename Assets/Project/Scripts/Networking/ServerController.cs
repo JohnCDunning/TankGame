@@ -143,6 +143,8 @@ public class ServerController : Photon.MonoBehaviour
         
         GameObject.FindObjectOfType<OnJoinedInstantiate>().OnJoinedRoom();
         
+        _Canvas.SetActive(false);
+        
     }
 
     public void ServerRestart()

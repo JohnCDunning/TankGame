@@ -73,7 +73,7 @@ public class NetworkingEvents : MonoBehaviour
                 ServerController.Instance.OnPlayerDefeated(playerID);
             }
 
-            if (pv.isMine)
+            if (pv && pv.isMine)
             {
                 PhotonNetwork.Destroy(pv);
             }

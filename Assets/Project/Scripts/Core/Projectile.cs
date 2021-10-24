@@ -49,7 +49,7 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
             Vector3 incomingVec = hit - transform.position;
             transform.forward = Vector3.Reflect(incomingVec, hitNormal);
             _ReflectionsRemaining--;
-            _ReflectPS.Play();
+            photonView.RPC("PlayReflectPS", PhotonTargets.All);
             return;
         }
 
@@ -58,16 +58,28 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
             Damage();
         }
     }
-
+   
     public void Damage()
     {
-        AppManager._Instance.SpawnExplosion(_ExplosionSize, transform.position);
-        _TrailPSDeathTimer.transform.SetParent(null);
-        _TrailPSDeathTimer.StartDeathTimer();
+        photonView.RPC("Explode", PhotonTargets.All);
 
         _IsDestroyed = true;
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
         PhotonNetwork.RaiseEvent(NetworkingEvents._OnDestroyEvent, new object[]{photonView.viewID}, true, raiseEventOptions);
     }
-    
+
+
+    [PunRPC]
+    void PlayReflectPS()
+    {
+        _ReflectPS.Play();
+    }
+    [PunRPC]
+    void Explode()
+    {
+        _TrailPSDeathTimer.transform.SetParent(null);
+        _TrailPSDeathTimer.StartDeathTimer();
+        AppManager._Instance.SpawnExplosion(_ExplosionSize, transform.position);
+    }
+
 }

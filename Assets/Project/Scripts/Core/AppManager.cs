@@ -35,25 +35,8 @@ public class AppManager : Photon.MonoBehaviour
         float time = 0f;
         float t = 0f;
             
-        switch (size)
-        {
-            case ExplosionSize.small:
-                time = 0.2f;
-                target = .1f;
-                break;
-            case ExplosionSize.medium:
-                target = .25f;
-                time = 0.25f;
-                break;
-            case ExplosionSize.large:
-                target = .5f;
-                time = 0.3f;
-                break;
-            case ExplosionSize.huge:
-                time = 0.4f;
-                target = 1f;
-                break;
-        }
+        target = .1f;
+        time = 0.2f;
 
         while (t < time)
         {

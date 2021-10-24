@@ -57,7 +57,7 @@ public class NetworkingEvents : MonoBehaviour
         {
             object[] data = (object[]) content;
             PhotonView pv = PhotonView.Find((int) data[0]);
-            if (pv.isMine)
+            if (pv && pv.isMine)
             {
                 PhotonNetwork.Destroy(pv);
             }

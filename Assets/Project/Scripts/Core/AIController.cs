@@ -8,9 +8,64 @@ public class AIController : Photon.MonoBehaviour
 {
     [SerializeField] private TankController _TankController;
     [SerializeField] private float _LookSpeed = 100f;
-
+    [SerializeField] private float _TargetSearchRate = 3f;
     private float _Cooldown = 3f;
     private float _CooldownTimer = 3f;
+
+    bool CanSeeTarget(TankController tank)
+    {
+        Vector3 turretPos = _TankController.ShootPoint.position;
+        Vector3 target = tank.transform.position;
+        Vector3 adjustedTarget = new Vector3(target.x, turretPos.y, target.z);
+        Ray ray = new Ray(turretPos, adjustedTarget - turretPos);
+            
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            if (hit.transform.gameObject.TryGetComponent(out TankController other) && other == tank)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    public TankController FindClosestOrValidTarget(TankController[] tanks)
+    {
+        TankController[] distanceSorted = tanks.OrderBy((d) => (d.transform.position - transform.position).sqrMagnitude).ToArray();
+        TankController distanceObject = distanceSorted.First();
+        
+        foreach (var tank in distanceSorted)
+        {
+            if (CanSeeTarget(tank))
+            {
+                return tank;
+            }
+        }
+        
+        return distanceObject;
+    }
+    
+
+    private void OnDestroy()
+    {
+        _Running = false;
+    }
+
+    private TankController _CurrentTarget = null;
+    private bool _Running = false;
+    private IEnumerator UpdateTargets()
+    {
+        while (_Running)
+        {
+            TankController[] _OtherTanks = GameObject.FindObjectsOfType<TankController>()
+                .Where(i => i.photonView.owner != this.photonView.owner).ToArray();
+
+            _CurrentTarget = FindClosestOrValidTarget(_OtherTanks);
+
+            yield return new WaitForSeconds(_TargetSearchRate);
+        }
+
+    }
     
     
     private void Update()
@@ -18,41 +73,25 @@ public class AIController : Photon.MonoBehaviour
         // look for player
         if (base.photonView.isMine)
         {
-            TankController[] _OtherTanks = GameObject.FindObjectsOfType<TankController>()
-                .Where(i => i.photonView.owner != this.photonView.owner).ToArray();
-
-            foreach (var tank in _OtherTanks)
+            if (_Running == false)
             {
-                
-                Vector3 target = tank.transform.position;
-                _TankController.TurnTurret(target,_LookSpeed * Time.deltaTime);
-
-
-                if (_CooldownTimer > _Cooldown)
+                _Running = true;
+                StartCoroutine(UpdateTargets());
+            }
+            
+            if (_CurrentTarget != null )
+            {
+                if (_CooldownTimer >= _Cooldown && CanSeeTarget(_CurrentTarget))
                 {
-                    Vector3 turretPos = _TankController.ShootPoint.position;
-
-                    Vector3 adjustedTarget = new Vector3(target.x, turretPos.y, target.z);
-                    Ray ray = new Ray(turretPos, adjustedTarget - turretPos);
-                    if (Physics.Raycast(ray, out RaycastHit hit))
-                    {
-                        if (hit.transform.gameObject.TryGetComponent(out TankController other))
-                        {
-                            if (_OtherTanks.Contains(other))
-                            {
-                                _TankController.FireWeapon();
-                                _CooldownTimer = 0f;
-                            }
-                        }
-                    }
+                    _TankController.FireWeapon();
+                    _CooldownTimer = 0f;
                 }
-
-                break;
+                
+                _TankController.TurnTurret(_CurrentTarget.transform.position,_LookSpeed * Time.deltaTime);
+                
             }
-            if (_CooldownTimer <= _Cooldown)
-            {
-                _CooldownTimer += Time.deltaTime;
-            }
+            _CooldownTimer += Time.deltaTime;
+            
         }
 
        

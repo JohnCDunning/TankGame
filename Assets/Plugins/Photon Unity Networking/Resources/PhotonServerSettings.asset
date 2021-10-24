@@ -33,7 +33,9 @@ MonoBehaviour:
   - DestroyRpc
   - DetachSmokeRPC
   - DoJump
+  - Explode
   - Flash
+  - HitDamage
   - InstantiateRpc
   - Marco
   - PickupItemInit

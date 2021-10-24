@@ -31,8 +31,8 @@ MonoBehaviour:
   - Chat
   - ColorRpc
   - DestroyRpc
+  - DetachSmokeRPC
   - DoJump
-  - Explode
   - Flash
   - InstantiateRpc
   - Marco

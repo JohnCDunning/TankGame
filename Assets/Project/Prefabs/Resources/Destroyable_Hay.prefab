@@ -111,6 +111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _Health: 1
+  _ExplosionSize: 2
 --- !u!114 &7515756038214057129
 MonoBehaviour:
   m_ObjectHideFlags: 0

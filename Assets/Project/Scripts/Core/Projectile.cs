@@ -13,6 +13,7 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
 
     private bool _FlaggedForDestruction;
 
+    [SerializeField] private ExplosionSize _ExplosionSize;
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -52,6 +53,7 @@ public class Projectile : Photon.MonoBehaviour, IDamageable
 
         if (PhotonNetwork.isMasterClient)
         {
+            AppManager._Instance.SpawnExplosion(_ExplosionSize, transform.position);
             _IsDestroyed = true;
             RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
             PhotonNetwork.RaiseEvent(NetworkingEvents._OnDestroyEvent, new object[]{photonView.viewID}, true,

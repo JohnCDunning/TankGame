@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class NetworkingEvents : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class NetworkingEvents : MonoBehaviour
     public static readonly byte _LoadScenario = 4;
     public static readonly byte _PlayerRestarted = 5;
     public static readonly byte _PlayersDefeated = 6;
+    public static readonly byte _ValidateScene = 7;
   
     public static NetworkingEvents Instance { get; private set; }
 
@@ -85,9 +87,15 @@ public class NetworkingEvents : MonoBehaviour
             object[] data = (object[]) content;
             string scene = (string) data[0];
             StartCoroutine(ServerController.Instance.LoadSceneAsync(scene));
+        }else if (eventCode == _ValidateScene)
+        {
+            object[] data = (object[]) content;
+            string scene = (string) data[0];
             
-            
-          
+            if (SceneManager.GetActiveScene().name != scene)
+            {
+                StartCoroutine(ServerController.Instance.LoadSceneAsync(scene));
+            }
         }
     }
     

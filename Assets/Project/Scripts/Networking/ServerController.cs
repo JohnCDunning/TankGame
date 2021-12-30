@@ -1,9 +1,6 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Sirenix.Utilities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -167,9 +164,5 @@ public class ServerController : Photon.MonoBehaviour
         }
         _Canvas.SetActive(false);
     }
-
-    private void Update()
-    {
-        
-    }
+    
 }

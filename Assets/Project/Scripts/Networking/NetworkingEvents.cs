@@ -43,7 +43,7 @@ public class NetworkingEvents : MonoBehaviour
             Vector3 pos = (Vector3) data[0];
             Vector3 rot = (Vector3) data[1];
             int bounces = (int)data[2];
-            
+            GameObject.FindObjectOfType<CameraShake>()?.TriggerShake(0.05f,0.04f);
             PhotonNetwork.InstantiateSceneObject("Projectile", pos, Quaternion.Euler(rot), 0,
                 null).GetComponent<Projectile>()._ReflectionsRemaining = bounces;
         }else if (eventCode == NetworkingEvents._CreateMineEvent)
